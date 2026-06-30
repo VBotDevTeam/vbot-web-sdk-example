@@ -22,6 +22,7 @@ const App: React.FC = () => {
   
   // Widget Config State
   const [widgetConfig, setWidgetConfig] = useState<any>({
+    enableFloatingBubble: true,
     overlayPositions: {
       dialpad: 'top-right',
       calling: 'top-right',
@@ -307,7 +308,8 @@ const App: React.FC = () => {
     } else {
       console.log('[VBot-CRM] Gọi ở chế độ Built-in (Native UI)');
       // Ensure Click-to-call renders built-in UI at clean top-right location
-      setWidgetConfig({
+      setWidgetConfig(prev => ({
+        ...prev,
         overlayPositions: {
           dialpad: 'top-right',
           calling: 'top-right',
@@ -318,7 +320,7 @@ const App: React.FC = () => {
           calling: { top: 62, right: 280, bottom: 0, left: 0 },
           incoming: { top: 62, right: 280, bottom: 0, left: 0 }
         }
-      });
+      }));
     }
 
     try {
@@ -397,7 +399,8 @@ const App: React.FC = () => {
     } else {
       if (widgetRef.current && typeof widgetRef.current.showCallUI === 'function') {
         // Set position to top-right (right below the header button)
-        setWidgetConfig({
+        setWidgetConfig(prev => ({
+          ...prev,
           overlayPositions: {
             dialpad: 'top-right',
             calling: 'top-right',
@@ -408,7 +411,7 @@ const App: React.FC = () => {
             calling: { top: 62, right: 280, bottom: 0, left: 0 },
             incoming: { top: 62, right: 280, bottom: 0, left: 0 }
           }
-        });
+        }));
         setTimeout(() => {
           widgetRef.current.showCallUI();
         }, 50);
@@ -531,7 +534,8 @@ const App: React.FC = () => {
               } else {
                 if (widgetRef.current && typeof widgetRef.current.showCallUI === 'function') {
                   // Set position to bottom-right (right above/next to the FAB)
-                  setWidgetConfig({
+                  setWidgetConfig(prev => ({
+                    ...prev,
                     overlayPositions: {
                       dialpad: 'bottom-right',
                       calling: 'bottom-right',
@@ -542,7 +546,7 @@ const App: React.FC = () => {
                       calling: { top: 0, right: 24, bottom: 88, left: 0 },
                       incoming: { top: 0, right: 24, bottom: 88, left: 0 }
                     }
-                  });
+                  }));
                   setTimeout(() => {
                     widgetRef.current.showCallUI();
                   }, 50);

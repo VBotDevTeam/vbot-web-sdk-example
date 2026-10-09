@@ -135,6 +135,7 @@ const App: React.FC = () => {
     if (!el) return;
 
     const activeInstance = el;
+    (window as any).vbotWidget = el;
 
     const handleUserConnected = () => {
       if (widgetRef.current !== activeInstance) return;
@@ -207,9 +208,9 @@ const App: React.FC = () => {
       }
     };
 
-    const handleCallEnded = () => {
+    const handleCallEnded = (e: any) => {
       if (widgetRef.current !== activeInstance) return;
-      console.log('[VBot-CRM] SDK: Cuộc gọi kết thúc');
+      console.log('[VBot-CRM] SDK: Cuộc gọi kết thúc', e?.detail?.callData);
       setCallStatus('idle');
       setCallSession(null);
       stopCallTimer();
@@ -219,7 +220,7 @@ const App: React.FC = () => {
     const handleCallFailed = (e: any) => {
       if (widgetRef.current !== activeInstance) return;
       const errorMsg = e.detail?.error || 'Thất bại';
-      console.error(`[VBot-CRM] SDK: Cuộc gọi lỗi: ${errorMsg}`);
+      console.error(`[VBot-CRM] SDK: Cuộc gọi lỗi: ${errorMsg}`, e.detail?.callData);
       setCallStatus('failed');
       setTimeout(() => {
         setCallStatus('idle');
@@ -294,8 +295,8 @@ const App: React.FC = () => {
     setIsIncomingOpen(false);
   };
 
-  const initiateCall = (phone: string) => {
-    console.log(`[VBot-CRM] Gọi tới: ${phone}`);
+  const initiateCall = (phone: string, hotline?: string, externalCallId?: string) => {
+    console.log(`[VBot-CRM] Gọi tới: ${phone}`, { hotline, externalCallId });
     if (!activeToken) {
       alert('Vui lòng cấu hình kết nối VBot SDK trước!');
       setCurrentView('settings');
@@ -326,7 +327,7 @@ const App: React.FC = () => {
 
     try {
       if (widgetRef.current) {
-        widgetRef.current.makeCall(phone);
+        widgetRef.current.makeCall(phone, hotline, externalCallId);
       }
     } catch (err) {
       console.error('[VBot-CRM] Lỗi cuộc gọi SDK:', err);
@@ -501,6 +502,7 @@ const App: React.FC = () => {
         headless={mode === 'headless' ? 'true' : undefined}
         config={JSON.stringify(widgetConfig)}
         base-url={import.meta.env.VITE_API_BASE_URL}
+        debug="true"
       />
 
       {/* Add Person Modal */}

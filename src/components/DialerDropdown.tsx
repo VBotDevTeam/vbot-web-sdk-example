@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react';
 interface DialerDropdownProps {
   isOpen: boolean;
   onClose: () => void;
-  onCall: (phone: string) => void;
+  onCall: (phone: string, hotline?: string, externalCallId?: string) => void;
   placement?: 'top' | 'bottom';
 }
 
@@ -15,6 +15,7 @@ export const DialerDropdown: React.FC<DialerDropdownProps> = ({
   placement = 'top'
 }) => {
   const [phoneInput, setPhoneInput] = useState('');
+  const [externalCallId, setExternalCallId] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -40,8 +41,9 @@ export const DialerDropdown: React.FC<DialerDropdownProps> = ({
 
   const handleCall = () => {
     if (phoneInput.trim()) {
-      onCall(phoneInput.trim());
+      onCall(phoneInput.trim(), undefined, externalCallId.trim() || undefined);
       setPhoneInput('');
+      setExternalCallId('');
       onClose();
     } else {
       alert('Vui lòng nhập số điện thoại cần gọi!');
@@ -102,6 +104,19 @@ export const DialerDropdown: React.FC<DialerDropdownProps> = ({
             <span className="text-[8px] text-slate-400 uppercase font-medium mt-0.5">{key.letters}</span>
           </button>
         ))}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="text-[10px] uppercase font-semibold tracking-wider text-slate-400">
+          External Call ID (Tùy chọn)
+        </label>
+        <input 
+          type="text" 
+          value={externalCallId}
+          onChange={(e) => setExternalCallId(e.target.value)}
+          className="w-full py-1.5 px-3 border border-slate-200 rounded text-xs text-slate-700 bg-slate-50 outline-none focus:border-emerald-500 transition"
+          placeholder="vd: crm_call_001..."
+        />
       </div>
 
       <button 
